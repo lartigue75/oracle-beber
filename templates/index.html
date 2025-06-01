@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>L'Oracle Béber</title>
+    <style>
+        body {
+            background-color: #f8f4ec;
+            font-family: serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2em;
+        }
+        .oracle-image {
+            width: 300px;
+            border-radius: 10px;
+            margin-bottom: 1em;
+        }
+        .response {
+            margin-top: 2em;
+            font-size: 1.3em;
+            font-style: italic;
+            max-width: 600px;
+            text-align: center;
+        }
+    </style>
+    <script>
+        function showQuestionForm() {
+            document.getElementById("intro-button").style.display = "none";
+            document.getElementById("question-form").style.display = "block";
+        }
+    </script>
+</head>
+<body>
+    <h1>L'Oracle Béber</h1>
+    <img src="{{ url_for('static', filename='beber.png') }}" class="oracle-image" alt="Béber">
+
+    <div>
+        <button id="intro-button" onclick="showQuestionForm()">Formuler une question</button>
+
+        <form id="question-form" method="POST" style="display:none;">
+            <input type="text" name="{{ input_name }}" placeholder="Pose ta question à Béber" style="width: 80%; padding: 0.5em;">
+            <br>
+            <button type="submit" name="action" value="ask">Interroger Béber</button>
+            {% if answer %}
+                <button type="submit" name="action" value="retry">Une autre réponse</button>
+            {% endif %}
+        </form>
+    </div>
+
+    {% if answer %}
+    <div class="response">
+        — {{ answer }}
+    </div>
+    {% endif %}
+</body>
+</html>
