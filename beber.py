@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import uuid
 import os
-from openai import OpenAI
+import openai
 
 app = Flask(__name__)
 app.secret_key = 'béber-cuisine'
