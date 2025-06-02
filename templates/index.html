@@ -1,33 +1,84 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="utf-8">
-    <title>Oracle Béber</title>
-    <link rel="stylesheet" href="/static/style.css">
-  </head>
-  <body>
-    <div class="container">
-      <img src="/static/beber.png" alt="Béber l'oracle" class="beber-img">
-      <h1>Pose ta question à Béber</h1>
-      <form method="POST">
-        <input type="text" name="{{ input_name }}" placeholder="Tape ta question ici" required>
-        <div class="buttons">
-          <button type="submit" name="action" value="ask">Demande à Béber</button>
-          <button type="submit" name="action" value="retry">Une autre réponse</button>
-        </div>
-      </form>
+<head>
+  <meta charset="UTF-8">
+  <title>Oracle Béber</title>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 30px;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #8b008b;
+      margin-bottom: 30px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    input[type="text"] {
+      padding: 10px;
+      font-size: 1.1em;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px;
+      background-color: #8b008b;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #a020f0;
+    }
+    .reponse {
+      margin-top: 30px;
+      font-size: 1.3em;
+      font-style: italic;
+      color: #444;
+    }
+    .jacqueline {
+      margin-top: 15px;
+      font-size: 1em;
+      font-weight: bold;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
 
-      {% if answer %}
-        <div class="response">
-          <h2>Réponse de Béber :</h2>
-          <p class="answer">{{ answer }}</p>
-        </div>
-        {% if jacqueline %}
-          <div class="comment">
-            <p class="jacqueline">💬 Jacqueline : {{ jacqueline }}</p>
-          </div>
-        {% endif %}
+  <div class="container">
+    <h1>🔮 Oracle Béber 🔮</h1>
+
+    <form method="POST" action="/">
+      <input type="text" name="{{ input_name }}" placeholder="Pose ta question..." required>
+      <button type="submit" name="action" value="ask">Demander à Béber</button>
+      <button type="submit" name="action" value="retry">Une autre réponse ?</button>
+    </form>
+
+    {% if answer %}
+      <div class="reponse">— {{ answer }}</div>
+      {% if jacqueline %}
+        <div class="jacqueline">💬 {{ jacqueline }}</div>
       {% endif %}
-    </div>
-  </body>
+    {% endif %}
+  </div>
+
+</body>
 </html>
