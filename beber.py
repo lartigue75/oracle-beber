@@ -101,7 +101,7 @@ def get_another_answer():
         return get_answer(question)
     return "Pose une vraie question."
 
-def get_raymond_comment(answer):
+def get_jacqueline_comment(answer):
     commentaires = [
         "Ben ça, j'aurais pas osé.",
         "Et moi qui croyais avoir tout entendu.",
@@ -127,7 +127,7 @@ def oracle():
         if action == 'ask' and question:
             session['last_question'] = question
             session['answer'] = get_answer(question)
-            session['raymond'] = get_raymond_comment(session['answer'])
+            session['jacqueline'] = get_jacqueline_comment(session['answer'])
         elif action == 'retry':
             session['answer'] = get_another_answer()
             session['raymond'] = get_raymond_comment(session['answer'])
