@@ -1,85 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>L'Oracle Béber</title>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f4ec;
-            font-family: 'EB Garamond', serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 2em;
-        }
-        h1 {
-            font-size: 3em;
-            margin-bottom: 0.2em;
-        }
-        .oracle-image {
-            width: 300px;
-            border-radius: 20px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.3);
-            margin-bottom: 1.5em;
-        }
-        form {
-            margin-top: 1em;
-            margin-bottom: 2em;
-            text-align: center;
-        }
-        input[type="text"] {
-            padding: 0.5em;
-            font-size: 1.2em;
-            width: 80vw;
-            max-width: 600px;
-            border: 2px solid #ccc;
-            border-radius: 10px;
-        }
-        button {
-            margin-top: 1em;
-            margin-right: 1em;
-            padding: 0.5em 1em;
-            font-size: 1.2em;
-            border: none;
-            border-radius: 10px;
-            background-color: #554f4f;
-            color: white;
-            cursor: pointer;
-        }
-        .response {
-            margin-top: 2em;
-            font-size: 1.5em;
-            font-style: italic;
-            max-width: 700px;
-            text-align: center;
-        }
-        .raymond-comment {
-            margin-top: 1em;
-            font-size: 1.2em;
-            color: #555;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-    <h1>L'Oracle Béber</h1>
-    <img src="{{ url_for('static', filename='beber.png') }}" alt="Portrait de Béber" class="oracle-image">
-    <form method="POST">
-        <input type="text" name="{{ input_name }}" placeholder="Pose ta question à Béber">
-        <br>
-        <button type="submit" name="action" value="ask">Formuler une question</button>
-        <button type="submit" name="action" value="retry">Une autre réponse</button>
-    </form>
+  <head>
+    <meta charset="utf-8">
+    <title>Oracle Béber</title>
+    <link rel="stylesheet" href="/static/style.css">
+  </head>
+  <body>
+    <div class="container">
+      <img src="/static/beber.png" alt="Béber l'oracle" class="beber-img">
+      <h1>Pose ta question à Béber</h1>
+      <form method="POST">
+        <input type="text" name="{{ input_name }}" placeholder="Tape ta question ici" required>
+        <div class="buttons">
+          <button type="submit" name="action" value="ask">Demande à Béber</button>
+          <button type="submit" name="action" value="retry">Une autre réponse</button>
+        </div>
+      </form>
 
-    {% if answer %}
-    <div class="response">
-        — {{ answer }}
+      {% if answer %}
+        <div class="response">
+          <h2>Réponse de Béber :</h2>
+          <p class="answer">{{ answer }}</p>
+        </div>
+        {% if jacqueline %}
+          <div class="comment">
+            <p class="jacqueline">💬 Jacqueline : {{ jacqueline }}</p>
+          </div>
+        {% endif %}
+      {% endif %}
     </div>
-    <div class="raymond-comment">
-        💬 Raymond : {{ raymond }}
-    </div>
-    {% endif %}
-</body>
+  </body>
 </html>
