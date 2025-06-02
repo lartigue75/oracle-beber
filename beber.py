@@ -21,10 +21,12 @@ STYLE_PROMPTS = [
     "Une sentence poético-fumiste à la Béber.",
     "Un slogan de pub des années 80 détourné par un prophète en slip.",
     "Un avertissement façon science-fiction cheap des années 60.",
-    "Une parabole animalière sortie d’un cerveau embrumé."
+    "Une parabole animalière sortie d’un cerveau embrumé.",
+    "Une réflexion noire de bistrot, à la Audiard fatigué.",
+    "Un murmure énigmatique d’un oracle qui a trop lu Kafka."
 ]
 
-MOTS_BANALS = {"nuage", "nuages", "chanter", "chantent", "danse", "dansent", "danser", "cosmique", "galaxie", "pluie", "ciel", "étoile"}
+MOTS_BANALS = {"nuage", "nuages", "chanter", "chantent", "danse", "dansent", "danser", "cosmique", "galaxie", "pluie", "ciel", "étoile", "jubile", "acrobat", "acrobatique", "tournoie", "fête", "musique", "camarade", "chant", "rythme"}
 
 MAX_HISTORY = 3
 
@@ -32,6 +34,9 @@ MAX_HISTORY = 3
 def nettoyer_texte(texte):
     mots = re.findall(r"\\b\\w+\\b", texte.lower())
     return set(mots)
+
+def racine_simplifiee(mot):
+    return re.sub(r'(es|s|x|nt|er|ent|ant|ique|iques)$', '', mot)
 
 def get_fresh_style():
     global recent_styles
@@ -48,12 +53,12 @@ def get_fresh_style():
 def filtrer_repetitions(texte):
     global recent_words
     mots = nettoyer_texte(texte)
-    racines = {mot.rstrip("esxnt") for mot in mots}  # simplification grossière
+    racines = {racine_simplifiee(mot) for mot in mots}
 
     for mot in racines:
         if mot in MOTS_BANALS:
             return True
-        if any(mot in w for w in recent_words):
+        if any(mot in w or w in mot for w in recent_words):
             return True
 
     recent_words.extend(racines)
@@ -108,7 +113,7 @@ def get_raymond_comment(answer):
         "Encore un qui a trop mangé de croissants.",
         "Ça sent la vieille prophétie mal réchauffée."
     ]
-    return random.choice(commentaires)
+    return f"Jacqueline : {random.choice(commentaires)}"
 
 @app.route('/', methods=['GET', 'POST'])
 def oracle():
