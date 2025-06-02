@@ -8,20 +8,18 @@ import re
 app = Flask(__name__)
 app.secret_key = 'béber-cuisine'
 
-# Configure OpenAI avec ta clé API (Render)
+# Configure OpenAI avec ta clé API (Render ou local)
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
-# Mémoires courtes
-recent_styles = []
 recent_words = []
 
 TONALITES = [
     "positive",
     "positive",
-    "positive",
+    "positive",  # ← tu voulais 3 positives
     "négative",
-    "mitigée",
-    "négative"
+    "négative",
+    "mitigée"
 ]
 
 STYLES_PERSONNAGES = [
@@ -61,6 +59,10 @@ def get_answer(question):
     for _ in range(6):
         tonalite = random.choice(TONALITES)
         style = random.choice(STYLES_PERSONNAGES)
+
+        print(f">>> OpenAI prompt avec tonalité : {tonalite}, style : {style}")
+        print(f">>> Question : {question}")
+
         prompt = f"""
         Tu es un oracle inspiré par {style}.
         Tu réponds à la question suivante avec une tonalité {tonalite}.
@@ -84,19 +86,18 @@ def get_answer(question):
                 temperature=1.2,
             )
             texte = response.choices[0].message['content'].strip()
+            print(f">>> Réponse brute : {texte}")
             if not filtrer_repetitions(texte):
                 return texte
         except Exception as e:
-            return f"Béber est en grève : {str(e)}"
+            print(">>> ERREUR OpenAI :", e)
+            return "Béber s’est emmêlé les neurones (erreur OpenAI)."
 
     return "Béber a buggé sur sa boule de cristal."
 
 @app.route('/', methods=['GET', 'POST'])
 def oracle():
     if request.method == 'POST':
-        if 'nouvelle_question' in request.form:
-            return redirect(url_for('oracle'))
-
         question = request.form.get("question", "").strip()
         if question:
             session['answer'] = get_answer(question)
