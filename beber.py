@@ -16,9 +16,9 @@ recent_styles = []
 recent_words = []
 
 TONALITES = [
+    "positive",
+    "positive",
     "négative",
-    "positive",
-    "positive",
     "mitigée",
     "négative"
 ]
@@ -33,7 +33,6 @@ STYLES_PERSONNAGES = [
 
 MOTS_BANALS = {"nuage", "nuages", "chanter", "chantent", "danse", "dansent", "danser", "cosmique", "galaxie", "pluie", "ciel", "étoile", "jubile", "acrobat", "acrobatique", "tournoie", "fête", "musique", "camarade", "chant", "rythme"}
 MAX_HISTORY = 3
-
 
 def nettoyer_texte(texte):
     mots = re.findall(r"\b\w+\b", texte.lower())
@@ -81,7 +80,7 @@ def get_answer(question):
                     {"role": "system", "content": "Tu es un oracle incarné par un personnage fantasque ou mystique. Tu réponds brièvement et avec un ton tranché, adapté à ta personnalité."},
                     {"role": "user", "content": prompt.strip()}
                 ],
-                max_tokens=60,
+                max_tokens=100,
                 temperature=1.2,
             )
             texte = response.choices[0].message['content'].strip()
