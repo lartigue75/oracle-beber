@@ -8,10 +8,10 @@ import re
 app = Flask(__name__)
 app.secret_key = 'béber-cuisine'
 
-# Configure OpenAI avec ta clé API (à mettre dans Render comme variable d'environnement)
+# Configure OpenAI avec ta clé API (Render)
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
-# Mémoire courte pour les styles et mots utilisés
+# Mémoires courtes
 recent_styles = []
 recent_words = []
 
@@ -27,12 +27,11 @@ STYLE_PROMPTS = [
 ]
 
 MOTS_BANALS = {"nuage", "nuages", "chanter", "chantent", "danse", "dansent", "danser", "cosmique", "galaxie", "pluie", "ciel", "étoile", "jubile", "acrobat", "acrobatique", "tournoie", "fête", "musique", "camarade", "chant", "rythme"}
-
 MAX_HISTORY = 3
 
 
 def nettoyer_texte(texte):
-    mots = re.findall(r"\\b\\w+\\b", texte.lower())
+    mots = re.findall(r"\b\w+\b", texte.lower())
     return set(mots)
 
 def racine_simplifiee(mot):
@@ -67,22 +66,27 @@ def filtrer_repetitions(texte):
     return False
 
 def get_answer(question):
-    for _ in range(6):  # max 6 tentatives si répétition
+    for _ in range(6):
         style = get_fresh_style()
-        prompt = f"""Tu es l'Oracle Béber. On te pose des questions existentielles, absurdes ou profondes.
-Ta réponse doit être courte, drôle, parfois surréaliste, mais toujours dans le style de Béber et affirmée :
-- Une phrase unique, maximum deux, style prophétique ou décalé.
-- Pas besoin de reformuler la question.
-- {style}
-Question : {question}
-Réponds :"""
+        prompt = f"""
+        Tu es l'Oracle Béber. On te pose des questions existentielles, absurdes ou profondes.
+        Tu réponds dans un style prophétique, toujours original.
+        Ta réponse doit être :
+        - Courte (1 ou 2 phrases),
+        - Parfois drôle, poétique, absurde ou ironique,
+        - Pas forcément positive : tu peux être enthousiaste, sceptique, pessimiste ou encourageant.
+
+        Style suggéré : {style}
+        Question : {question}
+        Réponds :
+        """
 
         try:
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": "Tu es l'Oracle Béber, un voyant décalé, entre poésie et absurdité prophétique."},
-                    {"role": "user", "content": prompt}
+                    {"role": "user", "content": prompt.strip()}
                 ],
                 max_tokens=60,
                 temperature=1.1,
