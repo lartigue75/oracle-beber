@@ -15,15 +15,20 @@ openai.api_key = os.environ.get("OPENAI_API_KEY")
 recent_styles = []
 recent_words = []
 
-STYLE_PROMPTS = [
-    "Un proverbe de bistrot, version Béber.",
-    "Une prédiction absurde façon devin d'Alice au pays des merveilles.",
-    "Une sentence poético-fumiste à la Béber.",
-    "Un slogan de pub des années 80 détourné par un prophète en slip.",
-    "Un avertissement façon science-fiction cheap des années 60.",
-    "Une parabole animalière sortie d’un cerveau embrumé.",
-    "Une réflexion noire de bistrot, à la Audiard fatigué.",
-    "Un murmure énigmatique d’un oracle qui a trop lu Kafka."
+TONALITES = [
+    "positive",
+    "mitigée",
+    "mitigée",
+    "mitigée",
+    "négative"
+]
+
+STYLES_PERSONNAGES = [
+    "Le Chapelier Fou d'Alice au pays des merveilles",
+    "Le Chat de Cheshire, mystérieux et ironique",
+    "La Reine de Cœur, autoritaire et excessive",
+    "La Pythie de Delphes, en transe prophétique",
+    "Merlin l'enchanteur, un brin farceur mais sage"
 ]
 
 MOTS_BANALS = {"nuage", "nuages", "chanter", "chantent", "danse", "dansent", "danser", "cosmique", "galaxie", "pluie", "ciel", "étoile", "jubile", "acrobat", "acrobatique", "tournoie", "fête", "musique", "camarade", "chant", "rythme"}
@@ -37,32 +42,16 @@ def nettoyer_texte(texte):
 def racine_simplifiee(mot):
     return re.sub(r'(es|s|x|nt|er|ent|ant|ique|iques)$', '', mot)
 
-def get_fresh_style():
-    global recent_styles
-    styles_disponibles = [s for s in STYLE_PROMPTS if s not in recent_styles]
-    if not styles_disponibles:
-        recent_styles = []
-        styles_disponibles = STYLE_PROMPTS[:]
-    nouveau = random.choice(styles_disponibles)
-    recent_styles.append(nouveau)
-    if len(recent_styles) > MAX_HISTORY:
-        recent_styles.pop(0)
-    return nouveau
-
 def filtrer_repetitions(texte):
     global recent_words
     mots = nettoyer_texte(texte)
     racines = {racine_simplifiee(mot) for mot in mots}
 
-    # Vérifie seulement si 2 mots banals sont présents au lieu d’un seul
-    banal_count = sum(1 for mot in racines if mot in MOTS_BANALS)
-    if banal_count > 1:
-        return True
-
-    # Ne rejette que si au moins 3 racines sont déjà dans les mots récents
-    match_count = sum(1 for mot in racines if any(mot in w or w in mot for w in recent_words))
-    if match_count >= 3:
-        return True
+    for mot in racines:
+        if mot in MOTS_BANALS:
+            return True
+        if any(mot in w or w in mot for w in recent_words):
+            return True
 
     recent_words.extend(racines)
     if len(recent_words) > 60:
@@ -71,16 +60,16 @@ def filtrer_repetitions(texte):
 
 def get_answer(question):
     for _ in range(6):
-        style = get_fresh_style()
+        tonalite = random.choice(TONALITES)
+        style = random.choice(STYLES_PERSONNAGES)
         prompt = f"""
-        Tu es l'Oracle Béber. On te pose des questions existentielles, absurdes ou profondes.
-        Tu réponds dans un style prophétique, toujours original.
-        Ta réponse doit être :
-        - Courte (1 ou 2 phrases),
-        - Parfois drôle, poétique, absurde ou ironique,
-        - Pas forcément positive : tu peux être enthousiaste, sceptique, pessimiste ou encourageant.
+        Tu es un oracle inspiré par {style}.
+        Tu réponds à la question suivante avec une tonalité {tonalite}.
+        - Sois bref (1 ou 2 phrases max)
+        - Pas de généralités ou banalités
+        - Adopte un ton marqué par ton personnage : exagéré, mystérieux, absurde ou inquiétant
+        - Évite les répétitions ou motifs trop lyriques
 
-        Style suggéré : {style}
         Question : {question}
         Réponds :
         """
@@ -89,11 +78,11 @@ def get_answer(question):
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[
-                    {"role": "system", "content": "Tu es l'Oracle Béber, un voyant décalé, entre poésie et absurdité prophétique."},
+                    {"role": "system", "content": "Tu es un oracle incarné par un personnage fantasque ou mystique. Tu réponds brièvement et avec un ton tranché, adapté à ta personnalité."},
                     {"role": "user", "content": prompt.strip()}
                 ],
                 max_tokens=60,
-                temperature=1.1,
+                temperature=1.2,
             )
             texte = response.choices[0].message['content'].strip()
             if not filtrer_repetitions(texte):
