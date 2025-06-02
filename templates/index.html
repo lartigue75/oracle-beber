@@ -1,64 +1,65 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
-  <title>Oracle Béber</title>
-  <style>
-    body {
-      background-color: #222;
-      color: #fff;
-      font-family: 'Georgia', serif;
-      text-align: center;
-      padding: 30px;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 30px;
-      background-color: #333;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    }
-    input[type="text"], button, input[type="submit"] {
-      width: 90%;
-      padding: 10px;
-      font-size: 1.1em;
-      border-radius: 10px;
-      border: none;
-      margin-top: 15px;
-    }
-    input[type="submit"], button {
-      background-color: #666;
-      color: white;
-      cursor: pointer;
-    }
-    .reponse {
-      margin-top: 30px;
-      font-size: 1.3em;
-      font-style: italic;
-    }
-    img {
-      max-width: 200px;
-      margin-bottom: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Oracle Béber</title>
+    <style>
+        body {
+            background-color: #fdf6e3;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+        }
+        img {
+            max-width: 300px;
+            margin-bottom: 30px;
+        }
+        .boite {
+            background-color: #fff3cd;
+            display: inline-block;
+            padding: 30px;
+            border: 2px dashed #d4a017;
+            border-radius: 20px;
+            margin-top: 20px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #ffdd57;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .réponse {
+            font-weight: bold;
+            font-size: 22px;
+            color: #5a2a00;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <img src="{{ url_for('static', filename='beber.png') }}" alt="Oracle Béber">
-    <h1>Pose ta question à l’oracle Béber</h1>
+    <img src="{{ url_for('static', filename='beber.png') }}" alt="Béber l'oracle">
 
-    {% if answer %}
-      <div class="reponse">— {{ answer }}</div>
-      <form method="get">
-        <button type="submit">Une autre question ?</button>
-      </form>
-    {% else %}
-      <form method="post">
-        <input type="text" name="question" placeholder="Tape ta question ici" required>
-        <input type="submit" value="Envoyer">
-      </form>
-    {% endif %}
-  </div>
+    <div class="boite">
+        {% if answer %}
+            <div class="réponse">{{ answer }}</div>
+            <form method="post">
+                <button type="submit" name="nouvelle_question">Une autre question ?</button>
+            </form>
+        {% else %}
+            <form method="post">
+                <input type="text" name="question" placeholder="Pose ta question à Béber l'Oracle">
+                <br>
+                <button type="submit">Consulter l'oracle</button>
+            </form>
+        {% endif %}
+    </div>
 </body>
 </html>

@@ -12,16 +12,9 @@ app.secret_key = 'béber-cuisine'
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 # Mémoires courtes
-recent_styles = []
 recent_words = []
 
-TONALITES = [
-    "positive",
-    "positive",
-    "négative",
-    "mitigée",
-    "négative"
-]
+TONALITES = ["positive", "positive", "négative", "mitigée", "négative"]
 
 STYLES_PERSONNAGES = [
     "Le Chapelier Fou d'Alice au pays des merveilles",
@@ -32,7 +25,6 @@ STYLES_PERSONNAGES = [
 ]
 
 MOTS_BANALS = {"nuage", "nuages", "chanter", "chantent", "danse", "dansent", "danser", "cosmique", "galaxie", "pluie", "ciel", "étoile", "jubile", "acrobat", "acrobatique", "tournoie", "fête", "musique", "camarade", "chant", "rythme"}
-MAX_HISTORY = 3
 
 def nettoyer_texte(texte):
     mots = re.findall(r"\b\w+\b", texte.lower())
@@ -94,13 +86,13 @@ def get_answer(question):
 @app.route('/', methods=['GET', 'POST'])
 def oracle():
     if request.method == 'POST':
+        if 'nouvelle_question' in request.form:
+            return redirect(url_for('oracle'))
+
         question = request.form.get("question", "").strip()
-
         if question:
-            tonalite = random.choice(TONALITES)
-            answer = random.choice(STYLES[tonalite])
+            answer = get_answer(question)
             session['answer'] = answer
-
         return redirect(url_for('oracle'))
 
     answer = session.pop('answer', None)
