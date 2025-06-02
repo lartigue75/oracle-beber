@@ -12,9 +12,17 @@ app.secret_key = 'béber-cuisine'
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 # Mémoires courtes
+recent_styles = []
 recent_words = []
 
-TONALITES = ["positive", "positive", "négative", "mitigée", "négative"]
+TONALITES = [
+    "positive",
+    "positive",
+    "positive",
+    "négative",
+    "mitigée",
+    "négative"
+]
 
 STYLES_PERSONNAGES = [
     "Le Chapelier Fou d'Alice au pays des merveilles",
@@ -91,8 +99,7 @@ def oracle():
 
         question = request.form.get("question", "").strip()
         if question:
-            answer = get_answer(question)
-            session['answer'] = answer
+            session['answer'] = get_answer(question)
         return redirect(url_for('oracle'))
 
     answer = session.pop('answer', None)
