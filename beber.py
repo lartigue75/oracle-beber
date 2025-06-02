@@ -93,18 +93,18 @@ def get_answer(question):
 
 @app.route('/', methods=['GET', 'POST'])
 def oracle():
-    input_name = "question"
-
     if request.method == 'POST':
-        question = request.form.get(input_name, '').strip()
+        question = request.form.get("question", "").strip()
 
         if question:
-            session['answer'] = get_answer(question)
+            tonalite = random.choice(TONALITES)
+            answer = random.choice(STYLES[tonalite])
+            session['answer'] = answer
 
         return redirect(url_for('oracle'))
 
     answer = session.pop('answer', None)
-    return render_template('index.html', answer=answer, input_name=input_name)
+    return render_template('index.html', answer=answer)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
