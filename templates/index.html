@@ -1,90 +1,65 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Oracle Béber</title>
-    <style>
-        body {
-            font-family: 'Georgia', serif;
-            background-color: #fcf8f3;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px;
-        }
-
-        h1 {
-            font-size: 3em;
-            margin-bottom: 10px;
-        }
-
-        img {
-            width: 300px;
-            border-radius: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            margin-bottom: 30px;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 600px;
-        }
-
-        input[type="text"] {
-            font-size: 1.2em;
-            padding: 12px;
-            width: 100%;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-        }
-
-        button {
-            font-size: 1.1em;
-            padding: 10px 20px;
-            margin: 5px;
-            background-color: #5c1e74;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .reponse {
-            margin-top: 40px;
-            font-size: 1.5em;
-            font-style: italic;
-            text-align: center;
-            max-width: 800px;
-        }
-
-        .jacqueline {
-            margin-top: 20px;
-            font-size: 1.2em;
-            text-align: center;
-            color: #555;
-        }
-    </style>
+  <meta charset="utf-8">
+  <title>Oracle Béber</title>
+  <style>
+    body {
+      background-color: #222;
+      color: #fff;
+      font-family: 'Georgia', serif;
+      text-align: center;
+      padding: 30px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 30px;
+      background-color: #333;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+    input[type="text"] {
+      width: 90%;
+      padding: 10px;
+      font-size: 1.1em;
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 15px;
+    }
+    input[type="submit"] {
+      padding: 10px 20px;
+      font-size: 1em;
+      background-color: #666;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .reponse {
+      margin-top: 30px;
+      font-size: 1.3em;
+      font-style: italic;
+    }
+    img {
+      max-width: 200px;
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
-    <h1>🔮 Oracle Béber 🔮</h1>
-    <img src="{{ url_for('static', filename='beber.png') }}" alt="Portrait de Béber">
-
+  <div class="container">
+    <img src="/static/beber.png" alt="Oracle Béber">
+    <h1>Pose ta question à l’oracle Béber</h1>
     <form method="post">
-        <input type="text" name="{{ input_name }}" placeholder="Pose ta question...">
-        <button type="submit" name="action" value="ask">Demander à Béber</button>
-        <button type="submit" name="action" value="retry">Une autre réponse ?</button>
+      <input type="text" name="{{ input_name }}" placeholder="Tape ta question ici" required>
+      <br>
+      <input type="submit" name="action" value="Envoyer">
     </form>
 
     {% if answer %}
-        <div class="reponse">— {{ answer }}</div>
-        {% if jacqueline %}
-            <div class="jacqueline">💬 {{ jacqueline }}</div>
-        {% endif %}
+      <div class="reponse">— {{ answer }}</div>
     {% endif %}
+  </div>
 </body>
 </html>
