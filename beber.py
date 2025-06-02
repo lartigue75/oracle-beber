@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import uuid
 import os
 import openai
+import random
 
 app = Flask(__name__)
 app.secret_key = 'béber-cuisine'
@@ -10,38 +11,24 @@ app.secret_key = 'béber-cuisine'
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 def get_answer(question):
-    prompt = f"""Question : {question}
-Réponds en une phrase unique, style oracle : drôle, absurde, poétique ou inattendue. 
-Pas de répétition de motifs. Pas de fromage ni de croissants sauf inspiration réelle."""
+    prompt = f"""Tu es l'Oracle Béber. On te pose des questions existentielles, absurdes ou profondes.
+Ta réponse doit être courte, drôle, parfois surréaliste, mais toujours dans le style de Béber :
+- Une phrase unique, style prophétique ou décalé.
+- Pas besoin de reformuler la question.
+Question : {question}
+Réponds :"""
 
     try:
-        memory = session.get("recent_words", [])
-        avoid_words = ', '.join(memory[-5:]) if memory else ""
-        system_message = (
-            "Tu es l'Oracle Béber. Un voyant non conventionnel, à la fois prophète, poète, clown et vieux sage. "
-            "Tu évites les thèmes trop souvent répétés comme la danse, les viennoiseries ou toute image déjà utilisée récemment. "
-            f"Évite notamment les mots suivants : {avoid_words}."
-        )
-
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": system_message},
+                {"role": "system", "content": "Tu es l'Oracle Béber, un voyant décalé, entre poésie et absurdité prophétique."},
                 {"role": "user", "content": prompt}
             ],
             max_tokens=60,
-            temperature=1,
+            temperature=0.9,
         )
-
-        answer = response.choices[0].message['content'].strip()
-
-        # Mémoriser les mots clés récents
-        important_words = [w for w in answer.lower().split() if len(w) > 4]
-        memory.extend(important_words[:3])  # on ajoute les 3 premiers mots un peu longs
-        session['recent_words'] = memory[-15:]  # garder une mémoire courte (15 mots max)
-
-        return answer
-
+        return response.choices[0].message['content'].strip()
     except Exception as e:
         return f"Béber est en grève : {str(e)}"
 
@@ -63,7 +50,6 @@ def get_raymond_comment(answer):
         "Encore un qui a trop mangé de croissants.",
         "Ça sent la vieille prophétie mal réchauffée."
     ]
-    import random
     return random.choice(commentaires)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -78,17 +64,16 @@ def oracle():
         if action == 'ask' and question:
             session['last_question'] = question
             session['answer'] = get_answer(question)
-            session['raymond'] = get_raymond_comment()
+            session['raymond'] = get_raymond_comment(session['answer'])
         elif action == 'retry':
             session['answer'] = get_another_answer()
-            session['raymond'] = get_raymond_comment()
+            session['raymond'] = get_raymond_comment(session['answer'])
 
-        return redirect(url_for('oracle'))  # Fin du POST
+        return redirect(url_for('oracle'))
 
-    # Partie GET
     answer = session.pop('answer', None)
-    raymond = session.pop('raymond', "")
-    return render_template('index.html', answer=answer, input_name=input_name, raymond=raymond)
+    raymond = session.pop('raymond', '')
+    return render_template('index.html', answer=answer, raymond=raymond, input_name=input_name)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
