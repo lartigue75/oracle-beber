@@ -13,7 +13,7 @@ openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 # Mémoire courte pour les styles et mots utilisés
 recent_styles = []
-recent_words = set()
+recent_words = []
 
 STYLE_PROMPTS = [
     "Un proverbe de bistrot, version Béber.",
@@ -30,7 +30,7 @@ MAX_HISTORY = 3
 
 
 def nettoyer_texte(texte):
-    mots = re.findall(r"\b\w+\b", texte.lower())
+    mots = re.findall(r"\\b\\w+\\b", texte.lower())
     return set(mots)
 
 def get_fresh_style():
@@ -48,17 +48,21 @@ def get_fresh_style():
 def filtrer_repetitions(texte):
     global recent_words
     mots = nettoyer_texte(texte)
-    if mots & recent_words:
-        return True
-    if mots & MOTS_BANALS:
-        return True
-    recent_words.update(mots)
-    if len(recent_words) > 100:
-        recent_words = set(list(recent_words)[-100:])
+    racines = {mot.rstrip("esxnt") for mot in mots}  # simplification grossière
+
+    for mot in racines:
+        if mot in MOTS_BANALS:
+            return True
+        if any(mot in w for w in recent_words):
+            return True
+
+    recent_words.extend(racines)
+    if len(recent_words) > 60:
+        recent_words = recent_words[-60:]
     return False
 
 def get_answer(question):
-    for _ in range(5):  # max 5 tentatives si répétition
+    for _ in range(6):  # max 6 tentatives si répétition
         style = get_fresh_style()
         prompt = f"""Tu es l'Oracle Béber. On te pose des questions existentielles, absurdes ou profondes.
 Ta réponse doit être courte, drôle, parfois surréaliste, mais toujours dans le style de Béber et affirmée :
@@ -75,7 +79,7 @@ Réponds :"""
                     {"role": "system", "content": "Tu es l'Oracle Béber, un voyant décalé, entre poésie et absurdité prophétique."},
                     {"role": "user", "content": prompt}
                 ],
-                max_tokens=300,
+                max_tokens=60,
                 temperature=1.1,
             )
             texte = response.choices[0].message['content'].strip()
