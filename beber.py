@@ -17,11 +17,17 @@ recent_words = set()
 
 STYLE_PROMPTS = [
     "Un proverbe de bistrot, version Béber.",
-    "Une prédiction absurde façon devin d'Alice au pays des merveilles'.",
-    "Une sentence poético-fumiste à la Béber."
+    "Une prédiction absurde façon devin d'Alice au pays des merveilles.",
+    "Une sentence poético-fumiste à la Béber.",
+    "Un slogan de pub des années 80 détourné par un prophète en slip.",
+    "Un avertissement façon science-fiction cheap des années 60.",
+    "Une parabole animalière sortie d’un cerveau embrumé."
 ]
 
+MOTS_BANALS = {"nuage", "nuages", "chanter", "chantent", "danse", "dansent", "danser", "cosmique", "galaxie", "pluie", "ciel", "étoile"}
+
 MAX_HISTORY = 3
+
 
 def nettoyer_texte(texte):
     mots = re.findall(r"\b\w+\b", texte.lower())
@@ -44,6 +50,8 @@ def filtrer_repetitions(texte):
     mots = nettoyer_texte(texte)
     if mots & recent_words:
         return True
+    if mots & MOTS_BANALS:
+        return True
     recent_words.update(mots)
     if len(recent_words) > 100:
         recent_words = set(list(recent_words)[-100:])
@@ -56,7 +64,6 @@ def get_answer(question):
 Ta réponse doit être courte, drôle, parfois surréaliste, mais toujours dans le style de Béber et affirmée :
 - Une phrase unique, maximum deux, style prophétique ou décalé.
 - Pas besoin de reformuler la question.
-- Tu dois produire une réponse qui ressemble à une trouvaille de langage, pas à une formule lue cent fois.
 - {style}
 Question : {question}
 Réponds :"""
@@ -68,8 +75,8 @@ Réponds :"""
                     {"role": "system", "content": "Tu es l'Oracle Béber, un voyant décalé, entre poésie et absurdité prophétique."},
                     {"role": "user", "content": prompt}
                 ],
-                max_tokens=60,
-                temperature=0.9,
+                max_tokens=300,
+                temperature=1.1,
             )
             texte = response.choices[0].message['content'].strip()
             if not filtrer_repetitions(texte):
