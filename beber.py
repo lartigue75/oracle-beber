@@ -93,11 +93,10 @@ def get_answer(question):
 
 @app.route('/', methods=['GET', 'POST'])
 def oracle():
-    input_name = f"question_{uuid.uuid4().hex[:8]}"
+    input_name = "question"
 
     if request.method == 'POST':
-        field_name = next((k for k in request.form if k.startswith('question_')), None)
-        question = request.form.get(field_name, '').strip()
+        question = request.form.get(input_name, '').strip()
 
         if question:
             session['answer'] = get_answer(question)

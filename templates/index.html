@@ -49,12 +49,12 @@
 </head>
 <body>
   <div class="container">
-    <img src="/static/beber.png" alt="Oracle Béber">
+    <img src="{{ url_for('static', filename='beber.png') }}" alt="Oracle Béber">
     <h1>Pose ta question à l’oracle Béber</h1>
     <form method="post">
-      <input type="text" name="{{ input_name }}" placeholder="Tape ta question ici" required>
+      <input type="text" name="question" placeholder="Tape ta question ici" required>
       <br>
-      <input type="submit" name="action" value="Envoyer">
+      <input type="submit" value="Envoyer">
     </form>
 
     {% if answer %}
