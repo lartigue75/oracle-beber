@@ -51,15 +51,20 @@ def get_another_answer():
         return get_answer(question)
     return "Pose une vraie question."
 
-def get_raymond_comment():
-    raymond_phrases = [
-        "J’aurais pas dit mieux, mais j’aurais pas dit ça non plus.",
-        "C’est pas faux, mais ça manque de chèvre chaud.",
-        "Si tu crois que c’est clair, t’as pas vu mon beau-frère.",
-        "Moi, je dis que Béber a peut-être trop forcé sur le camembert.",
-        "On comprend mieux si on ferme les yeux." 
+def get_raymond_comment(answer):
+    commentaires = [
+        "Ben ça, j'aurais pas osé.",
+        "Et moi qui croyais avoir tout entendu.",
+        "Ouais, enfin bon... faut voir.",
+        "C’est pas faux, mais c’est pas sûr non plus.",
+        "Ah ouais, quand même.",
+        "Moi j’dis, faut se méfier des chèvres.",
+        "Tu parles d’un oracle...",
+        "Encore un qui a trop mangé de croissants.",
+        "Ça sent la vieille prophétie mal réchauffée."
     ]
-    return random.choice(raymond_phrases)
+    import random
+    return random.choice(commentaires)
 
 @app.route('/', methods=['GET', 'POST'])
 def oracle():
@@ -80,8 +85,9 @@ def oracle():
 
         return redirect(url_for('oracle'))
 
-    answer = session.pop('answer', None)
-    return render_template('index.html', answer=answer, raymond=raymond, input_name=input_name)
+        answer = session.pop('answer', None)
+        raymond = get_raymond_comment(answer) if answer else ""
+        return render_template('index.html', answer=answer, input_name=input_name, raymond=raymond)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
