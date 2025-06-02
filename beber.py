@@ -83,11 +83,12 @@ def oracle():
             session['answer'] = get_another_answer()
             session['raymond'] = get_raymond_comment()
 
-        return redirect(url_for('oracle'))
+        return redirect(url_for('oracle'))  # Fin du POST
 
-        answer = session.pop('answer', None)
-        raymond = get_raymond_comment(answer) if answer else ""
-        return render_template('index.html', answer=answer, input_name=input_name, raymond=raymond)
+    # Partie GET
+    answer = session.pop('answer', None)
+    raymond = session.pop('raymond', "")
+    return render_template('index.html', answer=answer, input_name=input_name, raymond=raymond)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
