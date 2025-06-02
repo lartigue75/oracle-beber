@@ -130,13 +130,13 @@ def oracle():
             session['jacqueline'] = get_jacqueline_comment(session['answer'])
         elif action == 'retry':
             session['answer'] = get_another_answer()
-            session['raymond'] = get_raymond_comment(session['answer'])
+            session['jacqueline'] = get_jacqueline_comment(session['answer'])
 
         return redirect(url_for('oracle'))
 
     answer = session.pop('answer', None)
-    raymond = session.pop('raymond', '')
-    return render_template('index.html', answer=answer, raymond=raymond, input_name=input_name)
+    jacqueline = session.pop('jacqueline', '')
+    return render_template('index.html', answer=answer, raymond=jacqueline, input_name=input_name)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
