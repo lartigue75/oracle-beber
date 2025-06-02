@@ -54,11 +54,15 @@ def filtrer_repetitions(texte):
     mots = nettoyer_texte(texte)
     racines = {racine_simplifiee(mot) for mot in mots}
 
-    for mot in racines:
-        if mot in MOTS_BANALS:
-            return True
-        if any(mot in w or w in mot for w in recent_words):
-            return True
+    # Vérifie seulement si 2 mots banals sont présents au lieu d’un seul
+    banal_count = sum(1 for mot in racines if mot in MOTS_BANALS)
+    if banal_count > 1:
+        return True
+
+    # Ne rejette que si au moins 3 racines sont déjà dans les mots récents
+    match_count = sum(1 for mot in racines if any(mot in w or w in mot for w in recent_words))
+    if match_count >= 3:
+        return True
 
     recent_words.extend(racines)
     if len(recent_words) > 60:
