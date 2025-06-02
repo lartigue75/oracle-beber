@@ -16,9 +16,9 @@ recent_styles = []
 recent_words = []
 
 TONALITES = [
+    "négative",
     "positive",
-    "mitigée",
-    "mitigée",
+    "positive",
     "mitigée",
     "négative"
 ]
@@ -92,26 +92,6 @@ def get_answer(question):
 
     return "Béber a buggé sur sa boule de cristal."
 
-def get_another_answer():
-    question = session.get('last_question', '')
-    if question:
-        return get_answer(question)
-    return "Pose une vraie question."
-
-def get_jacqueline_comment(answer):
-    commentaires = [
-        "Ben ça, j'aurais pas osé.",
-        "Et moi qui croyais avoir tout entendu.",
-        "D'accord à 120 %",
-        "C’est pas faux, mais c’est pas sûr non plus.",
-        "Très bonne réponse !",
-        "Moi j’dis, faut se méfier des chèvres.",
-        "Tu parles d’un oracle...",
-        "Encore un qui a trop mangé de croissants.",
-        "Ça sent la vieille prophétie mal réchauffée."
-    ]
-    return f"Jacqueline : {random.choice(commentaires)}"
-
 @app.route('/', methods=['GET', 'POST'])
 def oracle():
     input_name = f"question_{uuid.uuid4().hex[:8]}"
@@ -119,21 +99,14 @@ def oracle():
     if request.method == 'POST':
         field_name = next((k for k in request.form if k.startswith('question_')), None)
         question = request.form.get(field_name, '').strip()
-        action = request.form.get('action')
 
-        if action == 'ask' and question:
-            session['last_question'] = question
+        if question:
             session['answer'] = get_answer(question)
-            session['jacqueline'] = get_jacqueline_comment(session['answer'])
-        elif action == 'retry':
-            session['answer'] = get_another_answer()
-            session['jacqueline'] = get_jacqueline_comment(session['answer'])
 
         return redirect(url_for('oracle'))
 
     answer = session.pop('answer', None)
-    jacqueline = session.pop('jacqueline', '')
-    return render_template('index.html', answer=answer, raymond=jacqueline, input_name=input_name)
+    return render_template('index.html', answer=answer, input_name=input_name)
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
